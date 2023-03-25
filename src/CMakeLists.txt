@@ -14,9 +14,25 @@ option(USE_SYSTEM_NCNN "build with system libncnn" OFF)
 option(USE_SYSTEM_WEBP "build with system libwebp" OFF)
 option(USE_STATIC_MOLTENVK "link moltenvk static library" OFF)
 
+set(USE_MASM OFF)
+set(ENABLE_WERROR OFF)
+
 find_package(Threads)
 find_package(OpenMP)
-find_package(Vulkan REQUIRED)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vulkan-Headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vulkan-Loader)
+
+set(Vulkan_FOUND TRUE)
+get_target_property(Vulkan_INCLUDE_DIR_1 Vulkan::Headers INTERFACE_INCLUDE_DIRECTORIES)
+string(REPLACE "\$<BUILD_INTERFACE:" "" Vulkan_INCLUDE_DIR_2 ${Vulkan_INCLUDE_DIR_1})
+string(REPLACE ">" "" Vulkan_INCLUDE_DIR ${Vulkan_INCLUDE_DIR_2})
+include_directories(${Vulkan_INCLUDE_DIR})
+if(MINGW)
+# HACK HACK HACK: ld does not automatically fix up stdcall aliases when using the import stub, so use the library file itself as the link target
+set(Vulkan_LIBRARY Vulkan::Headers $<TARGET_FILE:Vulkan::Vulkan>)
+else()
+set(Vulkan_LIBRARY Vulkan::Headers Vulkan::Vulkan)
+endif()
 
 macro(waifu2x_add_shader SHADER_SRC)
     get_filename_component(SHADER_SRC_NAME_WE ${SHADER_SRC} NAME_WE)
@@ -251,6 +267,16 @@ add_executable(waifu2x-ncnn-vulkan main.cpp waifu2x.cpp)
 add_dependencies(waifu2x-ncnn-vulkan generate-spirv)
 
 set(WAIFU2X_LINK_LIBRARIES ncnn webp ${Vulkan_LIBRARY})
+
+if(MINGW)
+target_compile_options(
+  waifu2x-ncnn-vulkan PRIVATE -municode -march=pentium4 -mfpmath=sse
+)
+
+target_link_options(
+  waifu2x-ncnn-vulkan PRIVATE -municode -march=pentium4 -mfpmath=sse -static-libstdc++ -static-libgcc
+)
+endif()
 
 if(USE_STATIC_MOLTENVK)
     find_library(CoreFoundation NAMES CoreFoundation)

@@ -4,3 +4,9 @@
 [submodule "src/libwebp"]
 	path = src/libwebp
 	url = https://github.com/webmproject/libwebp.git
+[submodule "src/Vulkan-Headers"]
+	path = src/Vulkan-Headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers.git
+[submodule "src/Vulkan-Loader"]
+	path = src/Vulkan-Loader
+	url = https://github.com/KhronosGroup/Vulkan-Loader.git
