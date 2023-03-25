@@ -269,13 +269,13 @@ add_dependencies(waifu2x-ncnn-vulkan generate-spirv)
 set(WAIFU2X_LINK_LIBRARIES ncnn webp ${Vulkan_LIBRARY})
 
 if(MINGW)
-target_compile_options(
-  waifu2x-ncnn-vulkan PRIVATE -municode -march=pentium4 -mfpmath=sse
-)
+    target_compile_options(
+        waifu2x-ncnn-vulkan PRIVATE -municode -march=pentium4 -mfpmath=sse
+    )
 
-target_link_options(
-  waifu2x-ncnn-vulkan PRIVATE -municode -march=pentium4 -mfpmath=sse -static-libstdc++ -static-libgcc
-)
+    target_link_options(
+        waifu2x-ncnn-vulkan PRIVATE -municode -march=pentium4 -mfpmath=sse -static-libstdc++ -static-libgcc
+    )
 endif()
 
 if(USE_STATIC_MOLTENVK)
