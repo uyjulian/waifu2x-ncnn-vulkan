@@ -16,6 +16,9 @@ option(USE_STATIC_MOLTENVK "link moltenvk static library" OFF)
 
 set(USE_MASM OFF)
 set(ENABLE_WERROR OFF)
+set(BUILD_WSI_XCB_SUPPORT OFF)
+set(BUILD_WSI_XLIB_SUPPORT OFF)
+set(BUILD_WSI_WAYLAND_SUPPORT OFF)
 
 find_package(Threads)
 find_package(OpenMP)
